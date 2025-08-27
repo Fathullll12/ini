@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>message & Harapan — Untuk Wwa</title>
+  <style>
+    :root{
+      --bg1:#e84687; --bg2:#dd3687; --accent:#dc89a8;
+      --glass: rgba(240, 178, 200, 0.6);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;min-height:100vh;font-family:Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.6), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#6a1436;display:flex;align-items:center;justify-content:center;padding:24px;
+    }
+    .wrap{width:min(1100px,96vw);background:linear-gradient(180deg,rgba(231, 210, 220, 0.8),rgba(255,255,255,0.7));border-radius:20px;padding:28px;box-shadow:0 18px 50px rgba(80,20,40,0.12);position:relative;overflow:hidden}
+    header{display:flex;align-items:center;gap:18px}
+    header h1{margin:0;font-weight:800;font-size:28px;color:#9c1842}
+    header p{margin:0;color:#7a2946;opacity:0.9}
+    .layout{display:grid;grid-template-columns:1fr 380px;gap:22px;margin-top:18px}
+    /* slideshow */
+    .slideshow{position:relative;border-radius:14px;overflow:hidden;border:6px solid rgba(255,255,255,0.85);box-shadow:0 12px 30px rgba(150,30,70,0.06)}
+    .slide{width:100%;height:420px;display:none;align-items:center;justify-content:center;background:#fff}
+    .slide img{width:100%;height:100%;object-fit:cover;display:block}
+    .slide.active{display:flex;animation:fade 0.6s ease}
+    @keyframes fade{from{opacity:0;transform:scale(0.98)} to{opacity:1;transform:scale(1)}}
+    .controls{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:10px;pointer-events:none}
+    .btn{pointer-events:auto;background:var(--glass);border:0;padding:10px;border-radius:10px;cursor:pointer;color:#9c1842;font-weight:700;box-shadow:0 6px 18px rgba(150,30,70,0.06)}
+    .dots{display:flex;gap:8px;position:absolute;left:50%;transform:translateX(-50%);bottom:12px}
+    .dot{width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,0.12);cursor:pointer}
+    .dot.active{background:var(--accent)}
+    /* right column */
+    .panel{background:linear-gradient(180deg,rgba(238, 120, 203, 0.9),rgba(249, 249, 249, 0.86));padding:18px;border-radius:12px;box-shadow:0 8px 20px rgba(120,30,70,0.04)}
+    .panel h3{margin:0 0 8px 0;color:#9c1842}
+    .letter{background:linear-gradient(180deg,#f9b1e8,#fff0);padding:14px;border-radius:10px;border:1px dashed rgba(156,24,66,0.08);text-align:left;color:#7a2946;line-height:1.5;max-height:160px;overflow:auto}
+    .small{font-size:0.95rem;color:#8b3a5a}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    .primary{background:linear-gradient(90deg,var(--accent),#ff4f90);color:rgb(246, 242, 246);border:0;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:800}
+    .outline{background:transparent;border:2px solid rgba(156,24,66,0.08);padding:10px 12px;border-radius:10px;cursor:pointer;color:#ff729f}
+    /* equalizer small (pink) */
+    .eq-wrap{display:flex;gap:6px;align-items:flex-end;margin-top:12px;justify-content:center}
+    .eq-bar{width:6px;background:#ff85b3;border-radius:4px;animation:ebb 1s infinite ease-in-out}
+    .eq-bar:nth-child(1){animation-delay:0s}
+    .eq-bar:nth-child(2){animation-delay:0.15s}
+    .eq-bar:nth-child(3){animation-delay:0.3s}
+    .eq-bar:nth-child(4){animation-delay:0.45s}
+    @keyframes ebb{0%,100%{height:8px}50%{height:34px}}
+    .eq-wrap.hidden{display:none}
+    /* falling hearts (background) */
+    .hearts{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+    .heart{position:absolute;color:#ffd8e6;font-size:20px;opacity:0.9;animation:rise linear forwards}
+    @keyframes rise{0%{transform:translateY(-10vh) scale(0.8);opacity:0}20%{opacity:1}100%{transform:translateY(110vh) scale(1.05);opacity:0}}
+    /* peluk animation */
+    .hug-overlay{position:fixed;inset:0;background:rgba(156,24,66,0.12);display:flex;align-items:center;justify-content:center;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s}
+    .hug-overlay.show{opacity:1;pointer-events:auto}
+    .big-heart{font-size:28vw;color:#ea98b5;text-shadow:0 8px 30px rgba(160,40,90,0.18);transform:scale(0);animation:pop 0.8s forwards}
+    @keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+    footer{margin-top:18px;text-align:center;color:#8b3a5a;font-size:0.95rem}
+    /* responsive */
+    @media (max-width:900px){ .layout{grid-template-columns:1fr} .slide{height:300px} .panel{order:2} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hearts" id="hearts"></div>
+
+    <header>
+      <div>
+        <h1>message & Harapan</h1>
+        <p class="small">Untuk Wwa —  message, dan surat kecil dari hati🤍🤍.</p>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT: slideshow -->
+      <div>
+        <div class="slideshow" id="slideshow">
+          <div class="slide active"><img src="90.jpg" alt="mem1"></div>
+          <div class="slide"><img src="223.jpg" alt="mem2"></div>
+          <div class="slide"><img src="3.jpg" alt="mem3"></div>
+          <div class="controls">
+            <button class="btn" id="prevBtn" aria-label="prev">&larr;</button>
+            <div class="dots" id="dots"></div>
+            <button class="btn" id="nextBtn" aria-label="next">&rarr;</button>
+          </div>
+        </div>
+
+        <footer>
+          <span class="small">Tip: klik gambar untuk melihat lebih dekat • tekan tombol "Peluk Aku" untuk kejutan</span>
+        </footer>
+      </div>
+
+      <!-- RIGHT: panel -->
+      <aside class="panel">
+        <h3>Surat Kecil</h3>
+        <div class="letter" id="letter">
+          <strong>Sayang Wwa,</strong>
+          <p> alooo wwaa adikkk, sedikit pesan di surat kecil ini, untuk kamu yang begitu cantik dan indahh yang setiap hari terlihat manis dan cantik, semoga kamu di berikan kebahagiaan dan hal yang baik selalu bersama kamu yaah wwa, di sini adek selalu ada buat wwa dan jadi orang pertama yang selalu ada buat kamu wwa di saat kamu butuh,  janji untuk kita terus bersama yaah bbe, i love u wwa🫂💕.</p>
+          <p>Dengan penuh cintaku untuk kamu wwa, <br><em>— (fathul)</em></p>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="openLetter">Buka Surat</button>
+          <button class="outline" id="toggleMusic">▶️ Play Lagu</button>
+        </div>
+
+        <div class="eq-wrap hidden" id="eqSmall">
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(229, 148, 174, 0.06);margin:16px 0">
+
+        <h3>Harapan nya bersama kamu</h3>
+        <p class="small">semoga kita tetap bersama yaah wwa,saling mencintai, menjaga dan tumbuh lagi jadi yang terbaik untuk kita berdua, jangan lupa untuk saling maafkan yaah sayang, i love wwa, love u more cantik.</p>
+
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="primary" id="hugBtn">Peluk Aku 🫂</button>
+          <a href="wwa.html" class="outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px">Kembali</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- overlay hug -->
+  <div id="hug" class="hug-overlay" aria-hidden="true">
+    <div class="big-heart">♡</div>
+  </div>
+
+  <!-- Audio (hidden controls) -->
+  <audio id="bg" src="00000.mp3" preload="auto"></audio>
+
+  <script>
+    // slideshow logic
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dotsWrap = document.getElementById('dots');
+    let idx = 0, autoTimer = null;
+    function renderDots(){
+      dotsWrap.innerHTML = '';
+      slides.forEach((s,i)=>{
+        const d = document.createElement('div'); d.className='dot' + (i===idx? ' active':'');
+        d.onclick = ()=>{ goTo(i); resetAuto() };
+        dotsWrap.appendChild(d);
+      });
+    }
+    function show(i){
+      slides.forEach(s=>s.classList.remove('active'));
+      slides[i].classList.add('active');
+      idx = i;
+      renderDots();
+    }
+    function next(){ show((idx+1)%slides.length) }
+    function prev(){ show((idx-1+slides.length)%slides.length) }
+    document.getElementById('nextBtn').onclick=()=>{ next(); resetAuto() }
+    document.getElementById('prevBtn').onclick=()=>{ prev(); resetAuto() }
+    function goTo(i){ show(i) }
+    function startAuto(){ autoTimer = setInterval(next, 4200) }
+    function resetAuto(){ clearInterval(autoTimer); startAuto() }
+    renderDots(); startAuto();
+
+    // double click zoom preview
+    slides.forEach(s=>{
+      s.addEventListener('click', ()=> {
+        const img = s.querySelector('img');
+        const win = window.open(img.src, '_blank');
+        if(!win) alert('Buka di tab baru gagal — cek blok popup di browsermu.');
+      });
+    });
+
+    // falling hearts background (random)
+    const heartsWrap = document.getElementById('hearts');
+    function spawnHeart(){
+      const el = document.createElement('div');
+      el.className='heart';
+      el.textContent='♡';
+      el.style.left = Math.random()*100 + 'vw';
+      el.style.fontSize = (12 + Math.random()*18) + 'px';
+      el.style.animationDuration = (4 + Math.random()*6) + 's';
+      heartsWrap.appendChild(el);
+      setTimeout(()=> el.remove(), 11000);
+    }
+    setInterval(spawnHeart, 900);
+
+    // audio + play toggle + small eq animation show/hide
+    const bg = document.getElementById('bg');
+    const eq = document.getElementById('eqSmall');
+    const playBtn = document.getElementById('toggleMusic');
+
+    async function tryPlay(){
+      try{
+        await bg.play();
+        eq.classList.remove('hidden');
+        playBtn.textContent = '⏸ Pause Lagu';
+      } catch(e){
+        // autoplay blocked — show play label
+        playBtn.textContent = '▶️ Play Lagu';
+      }
+    }
+    playBtn.addEventListener('click', async ()=>{
+      if(bg.paused){
+        try{ await bg.play(); eq.classList.remove('hidden'); playBtn.textContent='⏸ Pause Lagu' } catch(e){ playBtn.textContent='▶️ Play Lagu' }
+      } else { bg.pause(); eq.classList.add('hidden'); playBtn.textContent='▶️ Play Lagu' }
+    });
+
+    // try to autoplay once on load (may be blocked)
+    window.addEventListener('load', ()=>{ tryPlay() });
+
+    // when ended hide eq
+    bg.addEventListener('ended', ()=>{ eq.classList.add('hidden'); playBtn.textContent='▶️ Play Lagu' });
+
+    // open letter (simple modal toggle)
+    const openLetter = document.getElementById('openLetter');
+    const letter = document.getElementById('letter');
+    let letterOpen=false;
+    openLetter.addEventListener('click', ()=>{
+      if(!letterOpen){ letter.style.maxHeight='400px'; openLetter.textContent='Tutup Surat'; letterOpen=true }
+      else { letter.style.maxHeight='160px'; openLetter.textContent='Buka Surat'; letterOpen=false }
+    });
+
+    // hug animation
+    const hugBtn = document.getElementById('hugBtn');
+    const hug = document.getElementById('hug');
+    hugBtn.addEventListener('click', ()=>{
+      hug.classList.add('show');
+      setTimeout(()=> hug.classList.remove('show'), 1600);
+    });
+
+    // accessibility: pause audio on page hide
+    document.addEventListener('visibilitychange', ()=> {
+      if(document.hidden){ bg.pause(); eq.classList.add('hidden'); playBtn.textContent='▶️ Play Lagu' }
+    });
+  </script>
+</body>
+</html>
+ 
